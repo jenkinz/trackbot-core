@@ -19,7 +19,7 @@
     <property name="javac.deprecation" value="on"/>
     <property name="javac.debug" value="on"/>
     	
-    <!-- Excludes for the `compile` and `build.source` targets. -->
+    <!-- Excludes for the `compile` and `build.src` targets. -->
 	<patternset id="excludes.src">
 		<exclude name="**/package-info.java"/>
 		<exclude name="com/systronix/trackbot/test/*.java"/>
@@ -75,9 +75,9 @@
 
 	    </target>
 
-	<!-- Builds the core JAR (trackbot.jar). -->
-    <target name="build.core" depends="compile" description="Builds the core JAR (trackbot.jar).">
-        <jar destfile="${build.basedir}/jars/trackbot.jar" basedir="${build.basedir}/classes" />
+	<!-- Builds the core JAR (trackbot-core.jar). -->
+    <target name="build.core" depends="compile" description="Builds the core JAR (trackbot-core.jar).">
+        <jar destfile="${build.basedir}/jars/trackbot-core.jar" basedir="${build.basedir}/classes" />
     </target>
 	
 	<!-- Builds the source JAR (trackbot-src.jar). -->
@@ -89,7 +89,7 @@
     	
 	<!-- Default target: compiles the project, builds the core JAR, and builds the source JAR. -->
     <target name="build" depends="compile,build.core,build.src" 
-			description="Compiles the project, builds the core JAR (trackbot.jar) and source JAR (trackbot-src.jar)."
+			description="Compiles the project, builds the core JAR (trackbot-core.jar) and source JAR (trackbot-src.jar)."
 			>
     </target>
 		
