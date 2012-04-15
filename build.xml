@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<project name="TrackBot Core" default="build" basedir=".">
+	
+    <description>Compiles and builds the TrackBot Core project</description>
+
+	<!-- The source location. -->
+    <property name="src.paths" value="src"/>
+	
+	<!-- The base directory to put class and JAR files in. 
+			Class files will be put in ${build.basedir}/classes; JARs in ${build.basedir}/jars. -->
+	<property name="build.basedir" value="build" />
+	
+	<!-- The base directory for documentation-related files. 
+			Javadoc files will be put in ${docs.basedir}/javadoc; the Javadoc zip will be put in ${docs.basedir}. -->
+	<property name="docs.basedir" value="docs" />
+	
+	<!-- Compiler options. -->
+    <property name="javac.optimize" value="off"/>
+    <property name="javac.deprecation" value="on"/>
+    <property name="javac.debug" value="on"/>
+    	
+    <!-- Excludes for the `compile` and `build.source` targets. -->
+	<patternset id="excludes.src">
+		<exclude name="**/package-info.java"/>
+		<exclude name="com/systronix/trackbot/test/*.java"/>
+	</patternset>
+	
+	<!-- Prints information about the build environment. -->
+	<target name="print-env" description="Prints information about the build environment">
+		<echo>Ant version: ${ant.version}</echo>
+		<echo>Project    : ${ant.project.name}</echo>
+		<echo>Ant file   : ${ant.file}</echo>
+		<echo>Basedir    : ${basedir}</echo>
+		<echo>Environment:</echo>
+		<echo>    ant.home =${ant.home}</echo>
+		<echo>    java.home=${java.home}</echo>
+		<echo>Build properties:</echo>
+		<echo>    javac.bootclasspath =${javac.bootclasspath}</echo>
+		<echo>    dependency.classpath=${dependency.classpath}</echo>
+	</target>
+
+	<!-- Perform some checks (optional). -->
+	<target name="build-checks">
+	</target>
+	
+	<!-- Clean up (deletes all built class files and Javadocs). -->
+	<target name="clean" description="Deletes all classes built by this buildfile">
+		
+		<delete dir="${build.basedir}" failonerror="false"/>
+		<delete dir="${docs.basedir}" failonerror="false"/>
+	</target>
+
+	<!-- Sets up the build environment. -->
+	<target name="setup">
+		<mkdir dir="${build.basedir}/classes"/>
+		<mkdir dir="${build.basedir}/jars"/>
+	</target>
+	
+	<!-- Compiles the project. -->
+	<target name="compile" depends="print-env,build-checks,setup">
+		
+        <javac
+            classpath="lib/comm.jar:lib/cldc-1_1-stubs.jar"
+            debug="${javac.debug}"
+            srcdir="${src.paths}"
+            destdir="${build.basedir}/classes"
+            deprecation="${javac.deprecation}"
+            includes="**/*.java"
+            optimize="${javac.optimize}"
+            target="1.6"
+            source="1.6"
+            >
+	            <patternset refid="excludes.src"/>
+	        </javac>
+
+	    </target>
+
+	<!-- Builds the core JAR (trackbot.jar). -->
+    <target name="build.core" depends="compile" description="Builds the core JAR (trackbot.jar).">
+        <jar destfile="${build.basedir}/jars/trackbot.jar" basedir="${build.basedir}/classes" />
+    </target>
+	
+	<!-- Builds the source JAR (trackbot-src.jar). -->
+	<target name="build.src" depends="compile" description="Builds the source JAR (trackbot-src.jar).">
+		<jar destfile="${build.basedir}/jars/trackbot-src.jar" basedir="${src.paths}">
+			<patternset refid="excludes.src"/>
+		</jar>
+    </target>
+    	
+	<!-- Default target: compiles the project, builds the core JAR, and builds the source JAR. -->
+    <target name="build" depends="compile,build.core,build.src" 
+			description="Compiles the project, builds the core JAR (trackbot.jar) and source JAR (trackbot-src.jar)."
+			>
+    </target>
+		
+    <!-- Generate Javadocs. -->
+    <target name="javadoc" description="Generate Javadocs">
+        
+    	<!-- Delete the current Javadocs. -->
+    	<delete dir="${docs.basedir}" failonerror="false"/>
+        <mkdir dir="${docs.basedir}"/>
+
+        <!-- Create the Javadocs. -->
+        <javadoc
+            destdir="${docs.basedir}/javadoc"
+            access="protected"
+            author="true"
+            version="true"
+            use="true"
+            windowtitle="TrackBot Core API"
+            breakiterator="yes"
+            verbose="false"
+            classpath="lib/comm.jar:lib/cldc-1_1-stubs.jar:lib/imp-ng-stubs.jar"
+            >
+        	
+            <doctitle><![CDATA[TrackBot&trade; API]]></doctitle>
+            <header><![CDATA[<b>TrackBot&trade;<br>v0.2</b>]]></header>
+            <footer><![CDATA[<b>TrackBot&trade;<br>v0.2</b>]]></footer>
+            <bottom><![CDATA[<center><address><small>Copyright &copy; 2007-2008 Systronix&reg; Inc. All rights reserved.<br />939 Edison Street, Salt Lake City, UT, USA 84111-4216<br /><a href="http://www.systronix.com/">www.systronix.com</a></small></address></center>]]></bottom>
+
+            <!-- Files -->
+            <fileset dir="src" defaultexcludes="yes">
+                <include name="com/systronix/**/*.java"/>
+                <exclude name="com/systronix/trackbot/test/*.java"/>
+                <include name="com/qindesign/**/*.java"/>
+            </fileset>
+
+            <!-- External links -->
+            <link href="http://java.sun.com/javame/reference/apis/jsr139"/>
+            <link href="http://java.sun.com/javame/reference/apis/jsr118"/>
+            <link href="http://java.sun.com/j2se/1.4/docs/api"/>
+            <link href="http://java.sun.com/products/javacomm/reference/api"/>
+        </javadoc>
+
+        <!-- Create a ZIP -->
+        <zip destfile="trackbot-javadoc.zip" basedir="${docs.basedir}">
+            <include name="${docs.basedir}/javadoc/**"/>
+        </zip>
+    </target>
+</project>
