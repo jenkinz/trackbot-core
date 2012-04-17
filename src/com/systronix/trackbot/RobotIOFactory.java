@@ -15,7 +15,7 @@ import com.systronix.io.Debug;
  * use custom or standard input and output streams created by factory
  * implementations.
  * <p>
- * For example, the {@code com.systronix.trackbot.io.SunSpotRobotIOFactory
+ * For example, the {@link com.systronix.trackbot.io.SunSpotRobotIOFactory
  * SunSpotRobotIOFactory}
  * factory implementation creates streams that use the Sun SPOT's odd eDemo
  * UART interface.  The {@link com.systronix.trackbot.io.ConnectionRobotIOFactory

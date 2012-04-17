@@ -8,15 +8,15 @@
  */
 package com.systronix.trackbot;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InterruptedIOException;
-import java.io.OutputStream;
-
-import com.qindesign.util.Latch;
-import com.qindesign.util.PseudoThread;
-import com.qindesign.util.logging.Level;
 import com.systronix.io.Debug;
+import com.qindesign.util.logging.Level;
+import com.qindesign.util.PseudoThread;
+import com.qindesign.util.Latch;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.io.InterruptedIOException;
 
 /**
  * Provides communication with the TrackBot system.

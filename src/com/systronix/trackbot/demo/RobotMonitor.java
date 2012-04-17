@@ -1,25 +1,27 @@
 /*
- * Date: 2008 Mar 21
- * Time: 21:53 UTC
+ * Date: Nov 18, 2007
+ * Time: 4:43:04 PM
  *
- * (c) 2008 Systronix Inc.  All Rights reserved.
+ * (c) 2007 Systronix Inc.  All Rights reserved.
  * 939 Edison Street, Salt Lake City, UT, USA  84111
  * http://www.systronix.com/
  */
-package com.systronix.trackbot.test;
+package com.systronix.trackbot.demo;
 
 import com.systronix.trackbot.Robot;
 import com.systronix.trackbot.RobotIO;
 import com.systronix.trackbot.VersionInfo;
 import com.systronix.io.Debug;
+import com.qindesign.util.logging.Level;
+import com.qindesign.util.PseudoThread;
 
 /**
- * A test application that stresses the host serial interface to
+ * A test application that monitors the robot.
  *
- * @author bboyes
- * @version 0.1
+ * @author Shawn Silverman
+ * @version 0.4
  */
-public class HostStressTester extends Robot {
+public class RobotMonitor extends Robot {
     /**
      * The main entry point.
      *
@@ -29,22 +31,12 @@ public class HostStressTester extends Robot {
      * @throws Error if the no connection could be made to the robot.
      */
     public static void main(String[] args) throws Exception {
-        Debug.info("HostStressTester application starting.");
+        Debug.setLoggingLevel(Level.FINE);
+        Debug.info("RobotMonitor application starting.");
 
-        // Start this tester
-        // a lot of stuff happens as a result
-        // version gets queried
-        HostStressTester tester = new HostStressTester();
+        // Start the monitor
 
-        // This thread now terminates
-        for (;;)
-        {
-        	Debug.info("Acks = " + tester.getRobotIO().getAckCount());
-        	Debug.info("Naks = " + tester.getRobotIO().getNakCount());
-        	Debug.info("Inp Overflow = " + tester.getRobotIO().getInputOverflowCount());
-
-        	Thread.sleep(2000);
-        }
+        RobotMonitor monitor = new RobotMonitor();
     }
 
     private boolean sensorsConfigured;
@@ -53,24 +45,49 @@ public class HostStressTester extends Robot {
     private int powerNodeState = -1;
     private int sensorNodeState = -1;
 
+    private PseudoThread transducerStationPoller;
+
     /**
      * Creates the RobotMonitor.
      *
      * @throws Exception if there was an error while trying to connect to the
      *         robot.
      */
-    public HostStressTester() throws Exception {
+    public RobotMonitor() throws Exception {
         super();
     }
 
     /**
-     * Creates the HostStressTester using the given I/O connection.
-     * Used in Greenfoot simulator and elsewhere
+     * Creates the RobotMonitor using the given I/O connetion.
      *
      * @param robotIO the robot I/O connection
      */
-    public HostStressTester(RobotIO robotIO) {
+    public RobotMonitor(RobotIO robotIO) {
         super(robotIO);
+    }
+
+    /*
+     * Start the transducer station poller.
+     */
+    {
+        transducerStationPoller = new PseudoThread(250L) {
+                public void doWork() {
+                    sendTransducerStationQuery('F');
+                    sendTransducerStationQuery('A');
+                    sendTransducerStationQuery('P');
+                    sendTransducerStationQuery('S');
+                }
+            };
+        transducerStationPoller.start();
+    }
+
+    /**
+     * Calls the superclass's version and then stops the transducer station
+     * poller thread.
+     */
+    public void destroy() {
+        super.destroy();
+        transducerStationPoller.stop();
     }
 
     /**
@@ -194,6 +211,10 @@ public class HostStressTester extends Robot {
     }
 
     public void transducerStation(byte site, int left, int right, boolean pir) {
+        Debug.info("Transducer station '"
+                   + (char)site
+                   + "': left=" + left + " right=" + right
+                   + " PIR=" + pir);
     }
 
     public void taggingMemory(byte[] data) {
@@ -214,17 +235,17 @@ public class HostStressTester extends Robot {
         if (version.isIREnableSupported()) {
             // Turn on the sensors
 
-            if (!enableCornerSensors(true, true, true, true)) return;
-            if (!enableSideSensors(true, true, true, true)) return;
-            if (!enableCliffSensors(true, true, true, true)) return;
+            enableCornerSensors(true, true, true, true);
+            enableSideSensors(true, true, true, true);
+            enableCliffSensors(true, true, true, true);
         }
 
         if (version.isRangingSupported()) {
             // Set all the sensors to short range
 
-            if (!setCornerSensorRange(1)) return;
-            if (!setSideSensorRange(1)) return;
-            if (!setCliffSensorRange(1)) return;
+            setCornerSensorRange(1);
+            setSideSensorRange(1);
+            setCliffSensorRange(1);
         }
 
         sensorsConfigured = true;
@@ -233,7 +254,7 @@ public class HostStressTester extends Robot {
     public void robotVersion(VersionInfo version, boolean supported) {
         Debug.info("Robot version = " + version);
         if (!supported) {
-            Debug.severe("Robot version is UNSUPPPORTED!");
+            Debug.severe("Robot version is UNSUPPORTED!");
             return;
         }
 
@@ -249,19 +270,14 @@ public class HostStressTester extends Robot {
         this.version = version;
     }
 
-    int timeoutErrors = 0;
-    int timeoutResumes = 0;
-
     public void robotTimeout(boolean state, int ms) {
         if (state) {
             // Force sensor reconfiguration
 
             sensorsConfigured = false;
-            timeoutErrors++;
-            Debug.info("TIMEOUT after " + ms + "ms!");
 
+            Debug.info("TIMEOUT after " + ms + "ms!");
         } else {
-        	timeoutResumes++;
             Debug.info("RESUMED communication.");
             sendVersionQuery();
         }
@@ -273,6 +289,10 @@ public class HostStressTester extends Robot {
      * @return the name of this application.
      */
     public String toString() {
-        return getClass().getName();
+        return "RobotMonitor";
+    }
+
+    public void beaconState(byte[] state) {
+     
     }
 }

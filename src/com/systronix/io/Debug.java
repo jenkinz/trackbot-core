@@ -8,13 +8,10 @@
  */
 package com.systronix.io;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
+import com.qindesign.util.logging.*;
 
-import com.qindesign.util.logging.Handler;
-import com.qindesign.util.logging.Level;
-import com.qindesign.util.logging.LogRecord;
-import com.qindesign.util.logging.Logger;
+import java.io.*;
+import java.util.Date;
 
 /**
  * A utility class that manages debugging output.  The debugging output stream

@@ -231,7 +231,6 @@ public abstract class Robot implements Events.Listener {
      * new value.</p>
      *
      * @param testPoint the test point to set
-     * @param state 
      * @return whether the message was successfully queued.
      * @throws IllegalArgumentException if the test point is out of range.
      * @see VersionInfo#isTestPointsSupported()
@@ -302,7 +301,6 @@ public abstract class Robot implements Events.Listener {
      * Note that reads can cross a page boundary.</p>
      *
      * @param address the address from which to read
-     * @param count 
      * @return whether the message was successfully queued.
      * @throws IllegalArgumentException if the address or count is out of
      *         range.
@@ -346,9 +344,6 @@ public abstract class Robot implements Events.Listener {
      * message would overflow the RAN.</p>
      *
      * @param address write to this address
-     * @param b 
-     * @param off 
-     * @param len 
      * @return whether the message was successfully queued.
      * @throws IllegalArgumentException if the address or data length is out
      *         of range.
@@ -363,9 +358,7 @@ public abstract class Robot implements Events.Listener {
         if (address < 0 || 8191 < address) {
             throw new IllegalArgumentException("Address out of range: " + address);
         }
-        if (len == 0) {
-            return true;
-        }
+        if (len == 0) return true;
         if (len > 32 || len < 0) {
             throw new IllegalArgumentException("Length out of range: " + len);
         }
@@ -493,9 +486,7 @@ public abstract class Robot implements Events.Listener {
      * @return the digit count.
      */
     private static int countAbsDigits(int i) {
-        if (i < 0) {
-            i = -i;
-        }
+        if (i < 0) i = -i;
 
         int count = 1;
         while (i >= 10) {
@@ -613,9 +604,7 @@ public abstract class Robot implements Events.Listener {
 
             VersionInfo ver = events.getVersionInfo();
             if (ver != null && ver.getFirmwareVersion() == 4) {
-                if (colorCount > 1) {
-                    return true;
-                }
+                if (colorCount > 1) return true;
             }
         }
 
@@ -735,12 +724,8 @@ public abstract class Robot implements Events.Listener {
 
         VersionInfo ver = events.getVersionInfo();
         if (ver != null && ver.getFirmwareVersion() == 4) {
-            if (range == 2) {
-                range = 1;
-            }
-            else if (range == 1) {
-                range = 2;
-            }
+            if (range == 2) range = 1;
+            else if (range == 1) range = 2;
         }
 
         synchronized (this) {

@@ -8,12 +8,13 @@
  */
 package com.systronix.trackbot;
 
-import java.io.IOException;
-import java.util.Vector;
-
 import com.qindesign.util.PseudoThread;
 import com.qindesign.util.logging.Level;
 import com.systronix.io.Debug;
+
+import java.io.IOException;
+import java.util.Vector;
+import java.util.Arrays;
 
 /**
  * Dispatches TrackBot events to interested parties.  Events can include
@@ -51,12 +52,10 @@ import com.systronix.io.Debug;
  * @version 0.6
  */
 public class Events implements RobotIO.Listener {
-    
     /** This system property can specify the poll interval for the sensors. */
     public static final String PROP_SENSOR_POLL_INTERVAL = "com.systronix.trackbot.Events.pollInterval";
 
-    /** The default sensor poll interval, in msec */
-
+    /** The default sensor poll interval. */
     public static final int DEFAULT_SENSOR_POLL_INTERVAL = 100;
 
     /**
@@ -90,6 +89,8 @@ public class Events implements RobotIO.Listener {
             robotIO.queueMessage(MSG_S, 0, 3);
         }
     }
+//TESTING
+int prev[] = new int[10];
 
     /**
      * Listens to events.
@@ -125,7 +126,7 @@ public class Events implements RobotIO.Listener {
          * @param powerNodeState the power node state
          * @param sensorNodeState the sensor node state
          */
-        public void allStates(int powerNodeState, int sensorNodeState);
+        public void allStates(int powerNodeState, int sensorNodeState, int[][] beaconState, int trackBotID);
 
         /**
          * A test point reading was received.
@@ -278,13 +279,15 @@ public class Events implements RobotIO.Listener {
      * @param powerNodeState the new power node state
      * @param sensorNodeState the new sensor node state
      */
-    private void fireAllStates(int powerNodeState, int sensorNodeState) {
+    private void fireAllStates(int powerNodeState, int sensorNodeState, int[][] beaconState, int trackBotID) {
         sensorNodeState = adjustCliffSensors(sensorNodeState);
 
         for (int i = listeners.size(); --i >= 0; ) {
             ((Listener)listeners.elementAt(i)).allStates(
                     powerNodeState,
-                    sensorNodeState);
+                    sensorNodeState,
+                    beaconState,
+                    trackBotID);
         }
     }
 
@@ -449,9 +452,6 @@ public class Events implements RobotIO.Listener {
     /**
      * Fires the robot version to the listeners.  This method also determines
      * if the supplied robot version is supported by this API.
-     * These tests are >= so newer runtimes should work OK with
-     * older versions of this code, as long as the runtimes support the
-     * same basic operations.
      *
      * @param version the robot version string
      */
@@ -463,9 +463,8 @@ public class Events implements RobotIO.Listener {
         int fw = versionInfo.getFirmwareVersion();
         boolean supported = versionInfo.getHardwareVersion() >= 221;
         if (supported) {
-            // Support all firmware versions but not including 5 
-        	// See the TrackBot tech reference guide for version details
-        	// http://trackbot.systronix.com/documentation.html
+            // Support all firmware versions up to 7, but not including 5
+
             if (fw == 5) {
                 supported = false;
             }
@@ -659,11 +658,31 @@ public class Events implements RobotIO.Listener {
                     // This was inspired by the need to send all the sensor data
                     // at once when simulating the robot
 
-                    if (len != 10) return;
-
+                    if (len != 523) return;
+                    //Debug.finest("RCV: Msg Length: "+len);
+                    
                     int pState = hexToInt(b, off, 4);
                     int sState = hexToInt(b, off + 4, 4);
+                    int currTrackBotID = b[off + 8];
+                    int[][] bState = new int[64][10];
+                    //Debug.info("This TrackBotID: "+b[off+8]);
+                    //Debug.info("Other TrackBotID: "+b[off+9]);
+                    for (int i = 0, boff = 0; i < 64; i++, boff += 8) {
+                        for (int j = 0; j < 8; j++) {
+                            bState[i][j] = b[off + 9 + boff + j];
+                        }
+                    }
 
+// TESTING
+/*
+if (currTrackBotID == 1) {
+    if (Arrays.equals(prev, bState[0])) {
+        Debug.fine("STILL EQUAL");
+    }
+    prev = bState[0];
+}*/
+        
+                    
                     if (pState < 0) {
                         powerNodeState = -1;
                     } else {
@@ -676,7 +695,7 @@ public class Events implements RobotIO.Listener {
                     }
 
                     if (pState >= 0 && sState >= 0) {
-                        fireAllStates(pState, sState);
+                        fireAllStates(pState, sState, bState, currTrackBotID);
                     }
 
                     break;
