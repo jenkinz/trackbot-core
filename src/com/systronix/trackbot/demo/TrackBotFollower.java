@@ -9,7 +9,6 @@
 
 package com.systronix.trackbot.demo;
 
-import com.systronix.io.Debug;
 import com.systronix.trackbot.Motors;
 import com.systronix.trackbot.RobotIO;
 
@@ -596,7 +595,6 @@ public class TrackBotFollower extends Beaconer {
      *
      * @param dir the direction
      */
-     @Override
      protected void goDirection(int dir) {
         if (catch_up) {
             goDirection(dir, SPEED_FAST);
@@ -651,7 +649,6 @@ public class TrackBotFollower extends Beaconer {
      * @param dir the direction
      * @param speed the speed
      */
-     @Override
      protected void goDirection(int dir, int speed) {
         switch (dir) {
             case DIR_STOP:

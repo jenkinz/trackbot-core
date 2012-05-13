@@ -8,13 +8,12 @@
  */
 package com.systronix.trackbot;
 
+import java.io.IOException;
+import java.util.Vector;
+
 import com.qindesign.util.PseudoThread;
 import com.qindesign.util.logging.Level;
 import com.systronix.io.Debug;
-
-import java.io.IOException;
-import java.util.Vector;
-import java.util.Arrays;
 
 /**
  * Dispatches TrackBot events to interested parties.  Events can include

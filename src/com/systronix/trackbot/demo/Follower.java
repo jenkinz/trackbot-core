@@ -8,9 +8,9 @@
 
 package com.systronix.trackbot.demo;
 
-import com.systronix.trackbot.RobotIO;
 import com.systronix.io.Debug;
 import com.systronix.trackbot.Motors;
+import com.systronix.trackbot.RobotIO;
 
 /**
  * This file contains methods to implement a Follower behavior for TrackBot based

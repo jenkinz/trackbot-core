@@ -1,7 +1,26 @@
 <?xml version="1.0"?>
+<!--
+
+	This build script builds the TrackBot Core API.
+	
+	The default build (simply running `ant`) does the following:
+	
+		- Deletes all files in ./build
+		- Deletes all files in ./docs
+		- Compiles all source files in ./src, excluding **/package-inf.java and 
+			sources in com.systronix.trackbot.test. The compilation is run against
+			the Java ME API provided by ${sunspot.home}/lib/squawk_device.jar.
+			Therefore, the ${sunspot.home} property should be set. This is 
+			normally set in ~/.sunspot.properties by the SunSPOT installer.
+			The SunSPOT installer can be downloaded and the SDK installed from
+			http://www.sunspotworld.com.
+		- Builds the API jar, trackbot-core.jar, and places it in ./jars
+		- Builds the source jar, trackbot-core-source.jar, and places it in ./jars
+		
+-->
 <project name="TrackBot Core" default="build" basedir=".">
 	
-    <description>Compiles and builds the TrackBot Core project</description>
+    <description>Builds the TrackBot Core API</description>
 
 	<!-- The source location. -->
     <property name="src.paths" value="src"/>
@@ -14,7 +33,9 @@
 			Javadoc files will be put in ${docs.basedir}/javadoc; the Javadoc zip will be put in ${docs.basedir}. -->
 	<property name="docs.basedir" value="docs" />
 	
-	<!-- Compiler options. -->
+	<!-- javac compiler options. -->
+	<property name="javac.bootclasspath" value="${sunspot.home}/lib/squawk_device.jar"/><!-- Compile against the Squawk (Java ME) VM. -->
+	<property name="javac.classpath" value="lib/*"/>
     <property name="javac.optimize" value="off"/>
     <property name="javac.deprecation" value="on"/>
     <property name="javac.debug" value="on"/>
@@ -31,12 +52,14 @@
 		<echo>Project    : ${ant.project.name}</echo>
 		<echo>Ant file   : ${ant.file}</echo>
 		<echo>Basedir    : ${basedir}</echo>
+		<!--
 		<echo>Environment:</echo>
 		<echo>    ant.home =${ant.home}</echo>
 		<echo>    java.home=${java.home}</echo>
+		-->
 		<echo>Build properties:</echo>
-		<echo>    javac.bootclasspath =${javac.bootclasspath}</echo>
-		<echo>    dependency.classpath=${dependency.classpath}</echo>
+		<echo>    javac.bootclasspath=${javac.bootclasspath}</echo>
+		<echo>    javac.classpath=${javac.classpath}</echo>
 	</target>
 
 	<!-- Perform some checks (optional). -->
@@ -57,18 +80,21 @@
 	</target>
 	
 	<!-- Compiles the project. -->
-	<target name="compile" depends="print-env,build-checks,setup">
+	<target name="compile" depends="clean,print-env,build-checks,setup">
 		
         <javac
-            classpath="lib/comm.jar:lib/cldc-1_1-stubs.jar"
+			includeAntRuntime="no"
+			includeJavaRuntime="no"
+        	bootclasspath="${javac.bootclasspath}"
+            classpath="${javac.classpath}"
             debug="${javac.debug}"
             srcdir="${src.paths}"
             destdir="${build.basedir}/classes"
             deprecation="${javac.deprecation}"
             includes="**/*.java"
             optimize="${javac.optimize}"
-            target="1.6"
-            source="1.6"
+            target="1.2"
+            source="1.3"
             >
 	            <patternset refid="excludes.src"/>
 	        </javac>
@@ -82,7 +108,7 @@
 	
 	<!-- Builds the source JAR (trackbot-src.jar). -->
 	<target name="build.src" depends="compile" description="Builds the source JAR (trackbot-src.jar).">
-		<jar destfile="${build.basedir}/jars/trackbot-src.jar" basedir="${src.paths}">
+		<jar destfile="${build.basedir}/jars/trackbot-core-src.jar" basedir="${src.paths}">
 			<patternset refid="excludes.src"/>
 		</jar>
     </target>
@@ -110,7 +136,8 @@
             windowtitle="TrackBot Core API"
             breakiterator="yes"
             verbose="false"
-            classpath="lib/comm.jar:lib/cldc-1_1-stubs.jar:lib/imp-ng-stubs.jar"
+            Bootclasspath="${javac.bootclasspath}"
+        	classpath="${javac.classpath}"
             >
         	
             <doctitle><![CDATA[TrackBot&trade; API]]></doctitle>
@@ -133,7 +160,7 @@
         </javadoc>
 
         <!-- Create a ZIP -->
-        <zip destfile="trackbot-javadoc.zip" basedir="${docs.basedir}">
+        <zip destfile="trackbot-core-javadoc.zip" basedir="${docs.basedir}">
             <include name="${docs.basedir}/javadoc/**"/>
         </zip>
     </target>

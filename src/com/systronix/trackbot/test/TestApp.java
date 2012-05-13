@@ -5,13 +5,13 @@
  */
 package com.systronix.trackbot.test;
 
-import com.systronix.trackbot.RobotIO;
-import com.systronix.trackbot.RobotIOFactory;
-import com.systronix.io.Debug;
-import com.qindesign.util.PseudoThread;
-
 import java.io.IOException;
 import java.util.Vector;
+
+import com.qindesign.util.PseudoThread;
+import com.systronix.io.Debug;
+import com.systronix.trackbot.RobotIO;
+import com.systronix.trackbot.RobotIOFactory;
 
 /**
  * A basic test application for the Systronix TrackBot.

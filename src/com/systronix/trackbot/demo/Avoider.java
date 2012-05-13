@@ -8,13 +8,13 @@
  */
 package com.systronix.trackbot.demo;
 
+import com.qindesign.util.Random;
+import com.qindesign.util.logging.Level;
+import com.systronix.io.Debug;
 import com.systronix.trackbot.Motors;
 import com.systronix.trackbot.Robot;
 import com.systronix.trackbot.RobotIO;
 import com.systronix.trackbot.VersionInfo;
-import com.systronix.io.Debug;
-import com.qindesign.util.Random;
-import com.qindesign.util.logging.Level;
 
 /**
  * Program for the robot that avoids obstacles.

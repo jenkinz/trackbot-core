@@ -8,10 +8,16 @@
  */
 package com.systronix.io;
 
-import com.qindesign.util.logging.*;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
-import java.io.*;
-import java.util.Date;
+import com.qindesign.util.logging.Handler;
+import com.qindesign.util.logging.Level;
+import com.qindesign.util.logging.LogRecord;
+import com.qindesign.util.logging.Logger;
+
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * A utility class that manages debugging output.  The debugging output stream
@@ -23,6 +29,8 @@ import java.util.Date;
 public final class Debug extends Handler {
     /** Debug flag.  This causes debugging messages to be printed. */
     private static final boolean DEBUG = true;
+    
+    private static final Map testMap = new HashMap();
 
     /** The internal {@link Logger} object, has a name of "Debug". */
     private static Logger logger;

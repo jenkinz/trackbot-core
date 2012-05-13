@@ -8,15 +8,15 @@
  */
 package com.systronix.trackbot;
 
-import com.systronix.io.Debug;
-import com.qindesign.util.logging.Level;
-import com.qindesign.util.PseudoThread;
-import com.qindesign.util.Latch;
-
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.io.OutputStream;
+
+import com.qindesign.util.Latch;
+import com.qindesign.util.PseudoThread;
+import com.qindesign.util.logging.Level;
+import com.systronix.io.Debug;
 
 /**
  * Provides communication with the TrackBot system.
@@ -556,12 +556,11 @@ public class RobotIO {
 
         int msgLen = queueInfo[queueStart];
 
-        String s;
         if (outBuf[msgLen - 1] == '\r') {
             // Don't return the trailing CR
-
             return new String(outBuf, 0, msgLen - 1).concat("\\r");
-        } else {
+        } 
+        else {
             return new String(outBuf, 0, msgLen);
         }
     }
