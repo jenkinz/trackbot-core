@@ -16,9 +16,6 @@ import com.qindesign.util.logging.Level;
 import com.qindesign.util.logging.LogRecord;
 import com.qindesign.util.logging.Logger;
 
-import java.util.Map;
-import java.util.HashMap;
-
 /**
  * A utility class that manages debugging output.  The debugging output stream
  * is set to <code>System.out</code> in the class initializer.
@@ -30,8 +27,6 @@ public final class Debug extends Handler {
     /** Debug flag.  This causes debugging messages to be printed. */
     private static final boolean DEBUG = true;
     
-    private static final Map testMap = new HashMap();
-
     /** The internal {@link Logger} object, has a name of "Debug". */
     private static Logger logger;
 
