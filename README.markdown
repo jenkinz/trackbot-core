@@ -6,6 +6,6 @@ The TrackBot Core API provides the Java basis for writing such application-level
 
 # Instructions
 
-- ([Download](http://www.sunspotworld.com)) and install the SunSPOT SDK (the latest tested working version of the SDK is "Yellow v6.0"). This is required to compile the project, since it compiles against the [Java ME](http://en.wikipedia.org/wiki/Java_ME) API provided by the [Squawk](http://en.wikipedia.org/wiki/Squawk_virtual_machine) JVM in the SDK.
+- [Download](http://www.sunspotworld.com) and install the SunSPOT SDK (the latest tested working version of the SDK is "Yellow v6.0"). This is required to compile the project, since it compiles against the [Java ME](http://en.wikipedia.org/wiki/Java_ME) API provided by the [Squawk](http://en.wikipedia.org/wiki/Squawk_virtual_machine) JVM in the SDK.
 
-- To compile, envoke the default ant build target which compiles and builds the JAR library by simply running `ant`.
+- To compile, envoke the default ant build target which compiles and builds the JAR library by running `ant` inside `trackbot-core` once you have cloned the repository.
