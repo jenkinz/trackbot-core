@@ -42,7 +42,7 @@
 		<echo>Project    : ${ant.project.name}</echo>
 		<echo>Ant file   : ${ant.file}</echo>
 		<echo>Build properties:</echo>
-		<echo>    javac.bootclasspath =${javac.bootclasspath}</echo>
+		<echo>    javac.bootclasspath: ${javac.bootclasspath}</echo>
 	</target>
 	
 	<!-- Clean up (deletes all built class files and Javadocs). -->
